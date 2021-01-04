@@ -739,8 +739,10 @@ class BaseTrioEventLoop(asyncio.SelectorEventLoop):
         self._task = None
 
     def _check_closed(self):
-        if self._closed:
-            raise EventLoopClosedError('Event loop is closed')
+        try:
+            super()._check_closed()
+        except RuntimeError as e:
+            raise EventLoopClosedError(str(e)) from e
 
     def is_running(self):
         if self._stopped is None:
