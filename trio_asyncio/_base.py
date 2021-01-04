@@ -91,6 +91,10 @@ class TrioExecutor(concurrent.futures.ThreadPoolExecutor):
         self._running = False
 
 
+class EventLoopClosedError(RuntimeError):
+    pass
+
+
 class BaseTrioEventLoop(asyncio.SelectorEventLoop):
     """An asyncio event loop that runs on top of Trio.
 
@@ -733,6 +737,10 @@ class BaseTrioEventLoop(asyncio.SelectorEventLoop):
         # clean core fields
         self._nursery = None
         self._task = None
+
+    def _check_closed(self):
+        if self._closed:
+            raise EventLoopClosedError('Event loop is closed')
 
     def is_running(self):
         if self._stopped is None:

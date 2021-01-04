@@ -16,6 +16,7 @@ except ImportError:
 from ._util import run_aio_future, run_aio_generator
 from ._async import TrioEventLoop
 from ._deprecate import deprecated, warn_deprecated
+from ._base import EventLoopClosedError
 
 try:
     from trio.lowlevel import wait_for_child
@@ -419,7 +420,7 @@ async def open_loop(queue_len=None):
                     async def wait_for_sync():
                         try:
                             await loop.synchronize()
-                        except RuntimeError:  # "Event loop is closed"
+                        except EventLoopClosedError:
                             pass
                         sync_nursery.cancel_scope.cancel()
 
